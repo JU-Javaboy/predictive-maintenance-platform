@@ -1,0 +1,13 @@
+services:
+  sensor-quality:
+    build: ../services/sensor-quality
+    ports:
+      - "8001:8000"
+  failure-prediction:
+    build: ../services/failure-prediction
+    ports:
+      - "8002:8000"
+  maintenance-planning:
+    build: ../services/maintenance-planning
+    ports:
+      - "8003:8000"

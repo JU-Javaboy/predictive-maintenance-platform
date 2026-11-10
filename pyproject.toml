@@ -1,0 +1,29 @@
+[project]
+name = "predictive-maintenance-platform"
+version = "0.1.0"
+description = "AI-enabled predictive maintenance platform"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.8.0",
+]
+
+[tool.uv.workspace]
+members = ["services/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+    "shared",
+    "services/sensor-quality/src",
+    "services/failure-prediction/src",
+    "services/maintenance-planning/src",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
