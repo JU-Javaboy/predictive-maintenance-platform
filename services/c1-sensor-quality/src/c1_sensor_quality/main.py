@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="Maintenance Planning Service", version="0.1.0")
+app = FastAPI(title="Sensor Quality Service", version="0.1.0")
 
 
 @app.get("/health", tags=["operations"])
 def health() -> dict[str, str]:
-    return {"status": "ok", "service": "maintenance-planning"}
+    return {"status": "ok", "service": "c1-sensor-quality"}
 
 
 @app.get("/model", tags=["operations"])

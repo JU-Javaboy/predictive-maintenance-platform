@@ -19,9 +19,9 @@ members = ["services/*"]
 testpaths = ["tests"]
 pythonpath = [
     "shared",
-    "services/sensor-quality/src",
-    "services/failure-prediction/src",
-    "services/maintenance-planning/src",
+    "services/c1-sensor-quality/src",
+    "services/c2-failure-prediction/src",
+    "services/c3-maintenance-planning/src",
 ]
 
 [tool.ruff]

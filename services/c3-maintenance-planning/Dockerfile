@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir uv \
     && uv pip install --system .
 
 EXPOSE 8000
-CMD ["uvicorn", "maintenance_planning.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "c3_maintenance_planning.main:app", "--host", "0.0.0.0", "--port", "8000"]

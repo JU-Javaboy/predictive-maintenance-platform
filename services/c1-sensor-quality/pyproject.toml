@@ -1,7 +1,7 @@
 [project]
-name = "maintenance-planning"
+name = "c1-sensor-quality"
 version = "0.1.0"
-description = "C3 maintenance planning service"
+description = "C1 sensor quality and data validation service"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
