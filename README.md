@@ -20,6 +20,8 @@ uv run pytest
 uv run ruff check .
 ```
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the branching and pull request workflow.
+
 The C1 service has its own `pyproject.toml` and can be run independently with
 the command documented in its service directory.
 
