@@ -1,9 +1,9 @@
 # Architecture
 
-The platform is split into three independently deployable services:
+The platform currently contains one independently deployable service:
 
 ```text
-sensor data -> C1 Sensor Quality -> C2 Failure Prediction -> C3 Maintenance Planning
+sensor data -> C1 Sensor Quality
 ```
 
 Services communicate synchronously over versioned REST APIs. Contracts belong

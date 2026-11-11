@@ -1,11 +1,9 @@
 # Predictive Maintenance Platform
 
-An AI-enabled predictive maintenance platform composed of three independently
-deployable REST services:
+An AI-enabled predictive maintenance platform centered on an independently
+deployable REST service:
 
 - **C1** sensor quality and data validation
-- **C2** failure prediction
-- **C3** maintenance planning
 
 ## Development
 
@@ -22,8 +20,8 @@ uv run pytest
 uv run ruff check .
 ```
 
-Each service has its own `pyproject.toml` and can be run independently with
-the commands documented in its service directory.
+The C1 service has its own `pyproject.toml` and can be run independently with
+the command documented in its service directory.
 
 ## Data split
 

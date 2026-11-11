@@ -3,11 +3,3 @@ services:
     build: ../services/c1-sensor-quality
     ports:
       - "8001:8000"
-  c2-failure-prediction:
-    build: ../services/c2-failure-prediction
-    ports:
-      - "8002:8000"
-  c3-maintenance-planning:
-    build: ../services/c3-maintenance-planning
-    ports:
-      - "8003:8000"

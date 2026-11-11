@@ -20,8 +20,6 @@ testpaths = ["tests"]
 pythonpath = [
     "shared",
     "services/c1-sensor-quality/src",
-    "services/c2-failure-prediction/src",
-    "services/c3-maintenance-planning/src",
 ]
 
 [tool.ruff]
