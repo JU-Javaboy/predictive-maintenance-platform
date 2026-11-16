@@ -18,7 +18,6 @@ members = ["services/*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [
-    "shared",
     "services/c1-sensor-quality/src",
 ]
 
