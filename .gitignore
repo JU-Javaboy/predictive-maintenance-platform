@@ -4,7 +4,6 @@ __pycache__/
 .ruff_cache/
 *.py[cod]
 .DS_Store
-data/raw/*
 data/processed/*
 models/*
 !.gitkeep
