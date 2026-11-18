@@ -67,14 +67,28 @@ class SensorRecord(BaseModel):
     )
 
     # Failure information for C2 and C3. C1 only keeps the probability between 0 and 1.
-    failure_probability_gt: float | None = Field(default=None, description="Chance of failure, from 0 to 1.")
-    failure_in_7_days: bool = Field(default=False, description="True if the machine breaks within 7 days.")
-    remaining_useful_life_hours: float | None = Field(default=None, description="Hours left before the machine breaks.")
+    failure_probability_gt: float | None = Field(
+        default=None, description="Chance of failure, from 0 to 1."
+    )
+    failure_in_7_days: bool = Field(
+        default=False, description="True if the machine breaks within 7 days."
+    )
+    remaining_useful_life_hours: float | None = Field(
+        default=None, description="Hours left before the machine breaks."
+    )
     failure_type: str | None = Field(default=None, description="Which part is going to break.")
-    important_features: str | None = Field(default=None, description="Which sensors show the failure coming.")
-    maintenance_action: str | None = Field(default=None, description="Which repair job should be done.")
-    priority: str | None = Field(default=None, description="How urgent the repair is: low, medium, or high.")
-    concept_drift_active: bool = Field(default=False, description="True if the machine has started to behave differently.")
+    important_features: str | None = Field(
+        default=None, description="Which sensors show the failure coming."
+    )
+    maintenance_action: str | None = Field(
+        default=None, description="Which repair job should be done."
+    )
+    priority: str | None = Field(
+        default=None, description="How urgent the repair is: low, medium, or high."
+    )
+    concept_drift_active: bool = Field(
+        default=False, description="True if the machine has started to behave differently."
+    )
 
 
 class BatchRequest(BaseModel):
@@ -100,7 +114,9 @@ class QualityReportSummary(BaseModel):
 
     batch_id: str
     received: int = Field(..., description="Number of rows we got.")
-    accepted: int = Field(..., description="Rows we kept in the cleaned data (valid plus repaired).")
+    accepted: int = Field(
+        ..., description="Rows we kept in the cleaned data (valid plus repaired)."
+    )
     repaired: int = Field(default=0, description="Rows where we filled in a missing sensor value.")
     quarantined: int = Field(..., description="Bad rows we set aside.")
     duplicates_excluded: int = Field(..., description="Exact copies we skipped.")

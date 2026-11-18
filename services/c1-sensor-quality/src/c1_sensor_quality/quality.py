@@ -192,7 +192,8 @@ def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityRe
 
     # Step 1: Share of rows with at least one missing sensor value
     rows_with_missing = sum(
-        1 for record in batch.records
+        1
+        for record in batch.records
         if any(getattr(record, sensor) is None for sensor in SENSOR_NAMES)
     )
     missing_ratio = rows_with_missing / total_received
@@ -304,7 +305,8 @@ def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityRe
 
     # Step 6: Summary
     accepted = sum(
-        1 for item in processed_rows
+        1
+        for item in processed_rows
         if item.disposition in (RecordDisposition.VALID, RecordDisposition.REPAIRED)
     )
     quarantined = sum(

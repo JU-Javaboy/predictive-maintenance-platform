@@ -26,9 +26,7 @@ from pydantic import ValidationError
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw" / "predictive_maintenance_data.csv"
-CLEANED_DATA_PATH = (
-    PROJECT_ROOT / "data" / "processed" / "cleaned_predictive_maintenance_data.csv"
-)
+CLEANED_DATA_PATH = PROJECT_ROOT / "data" / "processed" / "cleaned_predictive_maintenance_data.csv"
 
 OUTPUT_COLUMNS = list(SensorRecord.model_fields) + ["quality_disposition", "quality_flags"]
 ACCEPTED_DISPOSITIONS = {RecordDisposition.VALID, RecordDisposition.REPAIRED}
@@ -42,7 +40,9 @@ def load_batch(csv_path: Path) -> BatchRequest:
             try:
                 records.append(SensorRecord(**row))
             except ValidationError as error:
-                raise ValueError(f"Line {line_number} does not match the schema.\n{error}") from error
+                raise ValueError(
+                    f"Line {line_number} does not match the schema.\n{error}"
+                ) from error
     return BatchRequest(batch_id=csv_path.stem, records=records)
 
 
