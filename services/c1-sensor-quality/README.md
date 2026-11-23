@@ -7,6 +7,17 @@ uv run --directory services/c1-sensor-quality uvicorn c1_sensor_quality.main:app
 Planned endpoints include data validation, quality reports, and model
 information.
 
+## Operational endpoints
+
+- `GET /health` confirms that the process is running.
+- `GET /ready` reports `ready` or `degraded`; it becomes degraded after a batch
+  is rejected.
+- `POST /quality/batches` processes a batch and returns processed records plus
+  a quality summary.
+- `GET /metrics` exposes C1 counters for batches, accepted/repaired/quarantined
+  records, duplicates, model predictions, low-confidence predictions, and
+  concept-drift warnings.
+
 ## Clean the raw dataset
 
 Run these from the project root:

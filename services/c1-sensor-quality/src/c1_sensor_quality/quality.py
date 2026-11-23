@@ -21,6 +21,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from c1_sensor_quality.monitoring import monitoring
 from c1_sensor_quality.schemas import (
     BatchRequest,
     ProcessedRecord,
@@ -188,6 +189,7 @@ def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityRe
         empty_summary = QualityReportSummary(
             batch_id=batch.batch_id, received=0, accepted=0, quarantined=0, duplicates_excluded=0
         )
+        monitoring.record_batch(empty_summary)
         return [], empty_summary
 
     # Step 1: Share of rows with at least one missing sensor value
@@ -217,6 +219,7 @@ def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityRe
             status="rejected",
             reasons=[reason],
         )
+        monitoring.record_batch(rejected_summary)
         return rejected_rows, rejected_summary
 
     # Step 3: Check each row, then sort by the cleaned machine ID and time.
@@ -330,4 +333,5 @@ def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityRe
         status=status,
         reasons=reasons,
     )
+    monitoring.record_batch(summary)
     return processed_rows, summary
