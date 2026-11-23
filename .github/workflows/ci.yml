@@ -27,3 +27,33 @@ jobs:
         run: uv run ruff format --check .
       - name: Run tests
         run: uv run pytest --cov --cov-report=term-missing
+      - name: Build C1 Docker image
+        run: docker build -t c1-sensor-quality:test services/c1-sensor-quality
+      - name: Docker health smoke test
+        run: |
+          docker run --detach --name c1-smoke -p 8001:8000 c1-sensor-quality:test
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:8001/health; then
+              docker rm --force c1-smoke
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs c1-smoke
+          docker rm --force c1-smoke
+          exit 1
+      - name: Build C1 Docker image
+        run: docker build -t c1-sensor-quality:test services/c1-sensor-quality
+      - name: Docker health smoke test
+        run: |
+          docker run --detach --name c1-smoke -p 8001:8000 c1-sensor-quality:test
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:8001/health; then
+              docker rm --force c1-smoke
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs c1-smoke
+          docker rm --force c1-smoke
+          exit 1
