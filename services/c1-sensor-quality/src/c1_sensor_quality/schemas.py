@@ -107,6 +107,9 @@ class ProcessedRecord(BaseModel):
     disposition: RecordDisposition
     flags: list[str] = Field(default_factory=list)
     quarantine_reason: str | None = None
+    model_status: Literal["normal", "degraded"] = "normal"
+    fallback: Literal["none", "conservative"] = "none"
+    model_warnings: list[str] = Field(default_factory=list)
 
 
 class QualityReportSummary(BaseModel):

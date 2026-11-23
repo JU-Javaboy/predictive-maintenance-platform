@@ -21,6 +21,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from c1_sensor_quality.fallback import apply_conservative_fallback, evaluate_model_behavior
 from c1_sensor_quality.monitoring import monitoring
 from c1_sensor_quality.schemas import (
     BatchRequest,
@@ -169,7 +170,16 @@ def validate_single_record(record: SensorRecord) -> ProcessedRecord:
             "failure_probability_gt": clean_probability,
         }
     )
-    return ProcessedRecord(record=cleaned_record, disposition=disposition, flags=flags)
+    behavior = evaluate_model_behavior(cleaned_record)
+    fallback_record = apply_conservative_fallback(cleaned_record, behavior)
+    return ProcessedRecord(
+        record=fallback_record,
+        disposition=disposition,
+        flags=flags,
+        model_status=behavior.status,
+        fallback=behavior.fallback,
+        model_warnings=behavior.warnings,
+    )
 
 
 def process_batch(batch: BatchRequest) -> tuple[list[ProcessedRecord], QualityReportSummary]:

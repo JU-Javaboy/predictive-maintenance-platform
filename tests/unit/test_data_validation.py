@@ -342,6 +342,47 @@ def test_failure_probability_is_clipped_to_0_and_1():
     assert "failure_probability_clipped" not in normal.flags
 
 
+def test_concept_drift_returns_conservative_fallback():
+    result = validate_single_record(
+        make_record(concept_drift_active=True, failure_probability_gt=0.37)
+    )
+
+    assert result.model_status == "degraded"
+    assert result.fallback == "conservative"
+    assert "concept_drift_active" in result.model_warnings
+    assert result.record.failure_probability_gt is None
+
+
+def test_out_of_distribution_anomaly_returns_conservative_fallback():
+    result = validate_single_record(
+        make_record(anomaly=True, anomaly_type="sensor_spike", failure_probability_gt=0.37)
+    )
+
+    assert result.model_status == "degraded"
+    assert "out_of_distribution" in result.model_warnings
+    assert result.record.failure_probability_gt is None
+
+
+def test_low_or_missing_confidence_returns_conservative_fallback():
+    low_confidence = validate_single_record(make_record(failure_probability_gt=0.50))
+    missing_confidence = validate_single_record(make_record(failure_probability_gt=None))
+
+    assert low_confidence.model_status == "degraded"
+    assert "low_confidence" in low_confidence.model_warnings
+    assert low_confidence.record.failure_probability_gt is None
+    assert missing_confidence.model_status == "degraded"
+    assert "low_confidence" in missing_confidence.model_warnings
+
+
+def test_normal_model_behavior_keeps_failure_probability():
+    result = validate_single_record(make_record(failure_probability_gt=0.37))
+
+    assert result.model_status == "normal"
+    assert result.fallback == "none"
+    assert result.model_warnings == []
+    assert result.record.failure_probability_gt == 0.37
+
+
 # ==============================================================================
 # Rule 9: Reading Raw CSV Rows
 # ==============================================================================
@@ -428,5 +469,8 @@ def test_raw_csv_rows_flow_through_schema_and_cleaning():
     assert repaired.disposition == RecordDisposition.REPAIRED
     assert repaired.record.temperature == 52.56
     assert repaired.record.anomaly_type == "missing_value"
-    assert repaired.record.failure_probability_gt == 0.0
+    assert repaired.record.failure_probability_gt is None
+    assert repaired.model_status == "degraded"
+    assert repaired.fallback == "conservative"
+    assert "out_of_distribution" in repaired.model_warnings
     assert "missing_temperature_imputed" in repaired.flags
