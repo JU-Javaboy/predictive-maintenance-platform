@@ -355,13 +355,19 @@ def test_model_with_other_features_is_rejected(
         AnomalyDetector(_WrongFeaturesModel(), imputation_params)
 
 
-def test_detector_loads_from_explicit_paths(imputation_params: dict[str, Any], tmp_path: Path) -> None:
+def test_detector_loads_from_explicit_paths(
+    imputation_params: dict[str, Any], tmp_path: Path
+) -> None:
     model_path = tmp_path / "model.pkl"
     with model_path.open("wb") as file:
         pickle.dump(_RuleModel(), file)
-    imputation_params_path = _write_imputation_params(imputation_params, tmp_path / "imputation_params.json")
+    imputation_params_path = _write_imputation_params(
+        imputation_params, tmp_path / "imputation_params.json"
+    )
 
-    detector = AnomalyDetector.load(model_path=model_path, imputation_params_path=imputation_params_path)
+    detector = AnomalyDetector.load(
+        model_path=model_path, imputation_params_path=imputation_params_path
+    )
 
     assert detector.labels == ANOMALY_TYPES
     frame = pd.DataFrame([_row("2012-02-01", "M001", 5.0)])
@@ -371,7 +377,9 @@ def test_detector_loads_from_explicit_paths(imputation_params: dict[str, Any], t
 def test_missing_model_file_has_a_readable_error(
     imputation_params: dict[str, Any], tmp_path: Path
 ) -> None:
-    imputation_params_path = _write_imputation_params(imputation_params, tmp_path / "imputation_params.json")
+    imputation_params_path = _write_imputation_params(
+        imputation_params, tmp_path / "imputation_params.json"
+    )
 
     with pytest.raises(FileNotFoundError, match="Anomaly model not found"):
         AnomalyDetector.load(

@@ -51,9 +51,7 @@ def validate_imputation_params(params: dict[str, Any]) -> None:
     """Reject settings that do not describe every mode and sensor."""
     medians = params.get("mode_sensor_medians")
     if not isinstance(medians, dict):
-        raise TypeError(
-            "imputation_params.json is missing the 'mode_sensor_medians' object."
-        )
+        raise TypeError("imputation_params.json is missing the 'mode_sensor_medians' object.")
 
     missing_modes = set(OPERATING_MODES) - set(medians)
     if missing_modes:
@@ -64,16 +62,14 @@ def validate_imputation_params(params: dict[str, Any]) -> None:
     unknown_modes = set(medians) - set(MODE_SENSOR_SCALES)
     if unknown_modes:
         raise ValueError(
-            "MODE_SENSOR_SCALES has no entry for operating mode(s): "
-            f"{sorted(unknown_modes)}"
+            f"MODE_SENSOR_SCALES has no entry for operating mode(s): {sorted(unknown_modes)}"
         )
 
     for mode in OPERATING_MODES:
         missing_sensors = set(SENSORS) - set(medians[mode])
         if missing_sensors:
             raise ValueError(
-                f"mode_sensor_medians[{mode!r}] is missing sensor(s): "
-                f"{sorted(missing_sensors)}"
+                f"mode_sensor_medians[{mode!r}] is missing sensor(s): {sorted(missing_sensors)}"
             )
 
 
@@ -150,8 +146,7 @@ def transform(frame: pd.DataFrame, imputation_params: dict[str, Any]) -> pd.Data
     # the sensor that normally exposes the most decimals. ``max(baseline, 1)``
     # keeps a fully-integer sensor from dividing by zero; its gap is 0 anyway.
     gap_ratio = [
-        out[f"resolution_gap_{sensor}"] / max(RESOLUTION_BASELINE[sensor], 1)
-        for sensor in SENSORS
+        out[f"resolution_gap_{sensor}"] / max(RESOLUTION_BASELINE[sensor], 1) for sensor in SENSORS
     ]
     out["resolution_gap_max"] = pd.concat(gap_ratio, axis=1).max(axis=1)
 

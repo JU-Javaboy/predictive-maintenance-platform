@@ -46,7 +46,7 @@ import pandas as pd
 from c1_sensor_quality.anomaly_detector import detect_anomaly
 
 batch = pd.read_csv("batch.csv", parse_dates=["timestamp"])
-predictions = detect_anomaly(batch)   # anomaly_type + probabilities
+predictions = detect_anomaly(batch)  # anomaly_type + probabilities
 # anomaly_type, anomaly_confidence, probability_normal,
 # probability_sensor_frozen, probability_sensor_spike
 ```
