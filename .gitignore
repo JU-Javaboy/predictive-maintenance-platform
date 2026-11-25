@@ -8,4 +8,5 @@ htmlcov/
 .DS_Store
 data/processed/*
 models/*
+!models/anomaly_detector_rf.pkl
 !.gitkeep
