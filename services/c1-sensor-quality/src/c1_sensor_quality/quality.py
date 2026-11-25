@@ -16,11 +16,10 @@ These are the cleaning rules we agreed on. Fixing quoted CSV lines is done in pa
 All the numbers we may want to change are in imputation_params.json.
 """
 
-import json
 import re
 from datetime import datetime
-from pathlib import Path
 
+from c1_sensor_quality.config import load_imputation_params
 from c1_sensor_quality.fallback import apply_conservative_fallback, evaluate_model_behavior
 from c1_sensor_quality.monitoring import monitoring
 from c1_sensor_quality.schemas import (
@@ -34,10 +33,7 @@ from c1_sensor_quality.schemas import (
 # ==============================================================================
 # Load the settings from imputation_params.json
 # ==============================================================================
-CONFIG_FILE_PATH = Path(__file__).parent / "imputation_params.json"
-
-with open(CONFIG_FILE_PATH, encoding="utf-8") as config_file:
-    CONFIG = json.load(config_file)
+CONFIG = load_imputation_params()
 
 # Share of rows with a missing sensor. Below 0.05 we fill them in. Above 0.10 we reject the batch. 0.05 and 0.10 in this case means 5% and 10% respectively.
 IMPUTE_THRESHOLD_PCT = CONFIG["thresholds"]["impute_missing_pct"]
