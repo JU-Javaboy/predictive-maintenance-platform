@@ -14,6 +14,7 @@ import threading
 from pathlib import Path
 from typing import Any
 
+from c1_sensor_quality.anomaly_detector.guardrails import guardrails_prediction
 import numpy as np
 import pandas as pd
 
@@ -30,6 +31,7 @@ from .utils.values_repeated import MachineRepeatIndex
 
 MODEL_PATH_ENV = "C1_ANOMALY_MODEL_PATH"
 IMPUTATION_PARAMS_PATH_ENV = "C1_IMPUTATION_PARAMS_PATH"
+PREDICTION_CONFIDENCE_THRESHOLD = 0.5
 
 
 def _resolve_path(explicit: str | Path | None, env_var: str, default: Path) -> Path:
@@ -164,8 +166,14 @@ class AnomalyDetector:
         The returned index is the input index.
         """
         prepared = self._prepare(frame)
-        return self._predict_prepared(prepared)
+        predictions =  self._predict_prepared(prepared)
+        if (predictions["anomaly_confidence"]<=PREDICTION_CONFIDENCE_THRESHOLD).any():
+            mask = predictions["anomaly_confidence"] <= PREDICTION_CONFIDENCE_THRESHOLD
 
+            original_inputs = prepared.iloc[predictions.loc[mask].index]
+            predictions.loc[mask] = guardrails_prediction(original_inputs)
+        return predictions
+ 
     def score(self, frame: pd.DataFrame) -> pd.DataFrame:
         """Return the prepared frame (features + evidence) with its predictions.
 
