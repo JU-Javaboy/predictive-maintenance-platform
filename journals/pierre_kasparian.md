@@ -14,3 +14,4 @@
 27 nov
 - looked into some guardrails for the model in case of low confidence. Conclude that we can make quite accurate prediction based on fixed rules (ex : z_score_temperature >80 , resolution drop giving nb of decimals below 2. 
 - Looking at the visulisation, it looks like the sensor spike are 100% coming from the temperature. That can probably cause the model to overfit. We will have to set threshold to other sensors, by looking at the visualisation in explo_models_guardrails.ipynb
+- i finally implemented a guardrail function for the values predicted by the model. For sensor spikes, it compares the value of the row to the bondaries identified in the visualisation. For sensor frozen, it looks for precision drop

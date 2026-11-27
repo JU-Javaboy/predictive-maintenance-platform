@@ -14,7 +14,6 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from c1_sensor_quality.anomaly_detector.guardrails import guardrails_prediction
 import numpy as np
 import pandas as pd
 
@@ -23,15 +22,16 @@ from .constants import (
     ANOMALY_TYPES,
     DEFAULT_MODEL_PATH,
     FEATURES,
+    PREDICTION_CONFIDENCE_THRESHOLD,
     REPEAT_WINDOW,
     SENSORS,
 )
 from .features import load_imputation_params, prepare_frame, validate_imputation_params
+from .guardrails import guardrails_prediction
 from .utils.values_repeated import MachineRepeatIndex
 
 MODEL_PATH_ENV = "C1_ANOMALY_MODEL_PATH"
 IMPUTATION_PARAMS_PATH_ENV = "C1_IMPUTATION_PARAMS_PATH"
-PREDICTION_CONFIDENCE_THRESHOLD = 0.5
 
 
 def _resolve_path(explicit: str | Path | None, env_var: str, default: Path) -> Path:
@@ -158,30 +158,54 @@ class AnomalyDetector:
             result[f"probability_{label}"] = probabilities[:, position]
         return result
 
+    def _apply_guardrails(self, prepared: pd.DataFrame, predictions: pd.DataFrame) -> pd.DataFrame:
+        """Replace low-confidence rows that a deterministic rule recognises.
+
+        Only rows at or below ``PREDICTION_CONFIDENCE_THRESHOLD`` are offered to
+        the rules. A low-confidence row that no rule recognises keeps the
+        model's prediction instead of becoming NaN.
+        """
+        low_confidence = (
+            predictions["anomaly_confidence"].to_numpy() <= PREDICTION_CONFIDENCE_THRESHOLD
+        )
+        if not low_confidence.any():
+            return predictions
+
+        rule_predictions = guardrails_prediction(prepared.iloc[low_confidence])
+        recognised = rule_predictions["anomaly_type"].notna().to_numpy()
+        if not recognised.any():
+            return predictions
+
+        # Positional assignment keeps duplicated input indexes aligned.
+        target_rows = np.flatnonzero(low_confidence)[recognised]
+        predictions.iloc[target_rows] = rule_predictions.loc[
+            recognised, predictions.columns
+        ].to_numpy()
+        return predictions
+
     def predict(self, frame: pd.DataFrame) -> pd.DataFrame:
         """Return one prediction per input row.
 
         Columns: ``anomaly_type`` (predicted label), ``anomaly_confidence``
         (probability of that label) and ``probability_<label>`` for each class.
         The returned index is the input index.
+
+        Rows whose model confidence does not clear the threshold are re-scored
+        by the deterministic guardrails when a rule recognises them.
         """
         prepared = self._prepare(frame)
-        predictions =  self._predict_prepared(prepared)
-        if (predictions["anomaly_confidence"]<=PREDICTION_CONFIDENCE_THRESHOLD).any():
-            mask = predictions["anomaly_confidence"] <= PREDICTION_CONFIDENCE_THRESHOLD
+        predictions = self._predict_prepared(prepared)
+        return self._apply_guardrails(prepared, predictions)
 
-            original_inputs = prepared.iloc[predictions.loc[mask].index]
-            predictions.loc[mask] = guardrails_prediction(original_inputs)
-        return predictions
- 
     def score(self, frame: pd.DataFrame) -> pd.DataFrame:
         """Return the prepared frame (features + evidence) with its predictions.
 
         Prediction columns are prefixed so a ground-truth ``anomaly_type``
-        column in the input is preserved for evaluation.
+        column in the input is preserved for evaluation. The guardrails apply
+        here too, so ``score`` and ``predict`` return the same verdicts.
         """
         prepared = self._prepare(frame)
-        predictions = self._predict_prepared(prepared).rename(
+        predictions = self._apply_guardrails(prepared, self._predict_prepared(prepared)).rename(
             columns={
                 "anomaly_type": "predicted_anomaly_type",
                 "anomaly_confidence": "predicted_confidence",

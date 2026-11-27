@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from c1_sensor_quality.anomaly_detector.guardrails import guardrails_prediction
 import pandas as pd
 
 from .inference import AnomalyDetector
@@ -38,6 +37,4 @@ def detect_anomaly(
     Pass an explicit ``detector`` when you need another model or a fresh state.
     """
     active_detector = detector if detector is not None else get_detector()
-    predictions = active_detector.predict(df)
-
-    return predictions
+    return active_detector.predict(df)
