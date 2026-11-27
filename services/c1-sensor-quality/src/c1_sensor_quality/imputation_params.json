@@ -1,0 +1,49 @@
+{
+  "description": "Settings for C1 data cleaning. The medians for each operating mode come from the first two years of data only.",
+  "fitted_date_range": "2012-01-14 to 2014-01-13",
+  "thresholds": {
+    "impute_missing_pct": 0.05,
+    "drop_rows_missing_pct": 0.10,
+    "min_rows_for_batch_reject": 100
+  },
+  "fatal_bounds": {
+    "pressure": [0.0, 500.0],
+    "rpm": [0.0, 10000.0],
+    "power": [0.0, 2000.0],
+    "temperature": [-20.0, 2000.0]
+  },
+  "spike_flags": {
+    "temperature_above": 150.0,
+    "vibration_below": 0.0
+  },
+  "mode_sensor_medians": {
+    "NORMAL": {
+      "temperature": 52.56,
+      "vibration": 4.54,
+      "pressure": 96.59,
+      "rpm": 1510.86,
+      "power": 223.51
+    },
+    "HIGH_LOAD": {
+      "temperature": 60.62,
+      "vibration": 4.55,
+      "pressure": 96.59,
+      "rpm": 2210.58,
+      "power": 343.47
+    },
+    "IDLE": {
+      "temperature": 47.48,
+      "vibration": 4.51,
+      "pressure": 96.61,
+      "rpm": 509.42,
+      "power": 73.48
+    },
+    "OVERLOAD": {
+      "temperature": 67.61,
+      "vibration": 4.55,
+      "pressure": 96.59,
+      "rpm": 2609.89,
+      "power": 473.47
+    }
+  }
+}
